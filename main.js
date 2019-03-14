@@ -19,6 +19,14 @@ let result = {
   10: 0
 }
 
+window.coin = coin
+
+const change = id => {
+  console.log(ENUM[id])
+  coin[id] = parseInt(document.getElementById(`${ENUM[id]}-input`).value)
+}
+
+window.change = change
 
 class Main {
   constructor(){

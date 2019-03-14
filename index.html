@@ -10,7 +10,17 @@
 </head>
 <body>
   <div>
+    <div class="input-group">
+      <div class="input-group-prepend">
+        <span class="input-group-text">1, 5, 10, 20</span>
+      </div>
+      <input type="number" aria-label="1" class="form-control" value="10" onchange="change(3)" id="1-input">
+      <input type="number" aria-label="5" class="form-control" value="10" onchange="change(2)" id="5-input">
+      <input type="number" aria-label="10" class="form-control" value="10" onchange="change(1)" id="10-input">
+      <input type="number" aria-label="20" class="form-control" value="10" onchange="change(0)" id="20-input">
+    </div>
     <table class="table">
+
       <thead>
         <tr>
           <th scope="col">1 ₺</th>
