@@ -1,4 +1,4 @@
-import {KNNImageClassifier} from 'deeplearn-knn-image-classifier';
+import { KNNImageClassifier } from 'deeplearn-knn-image-classifier';
 import * as dl from 'deeplearn';
 
 // Number of classes to classify
@@ -13,6 +13,7 @@ let [selected] = [0]
 const ENUM = [20, 10, 5, 1]
 
 let coin = [10, 10, 10, 10]
+
 let result = {
   1: 0,
   5: 0,
@@ -23,13 +24,27 @@ window.coin = coin
 
 const change = id => {
   console.log(ENUM[id])
-  coin[id] = parseInt(document.getElementById(`${ENUM[id]}-input`).value)
+
+  let val = parseInt(document.getElementById(`${ENUM[id]}-input`).value)
+
+  if (isNaN(val)) {
+    val = 0;
+  }
+
+  if (val < 0) {
+    val = 0
+  }
+
+  coin[id] = val;
+
+
+  document.getElementById(`bank-${ENUM[id]}-total`).innerHTML = ENUM[id] * coin[id];
 }
 
 window.change = change
 
 class Main {
-  constructor(){
+  constructor() {
     // Initiate variables
     this.infoTexts = [];
     this.training = -1; // -1 when no class is being trained
@@ -47,7 +62,7 @@ class Main {
     document.body.appendChild(this.video);
 
     // Create training buttons and info texts
-    for(let i=0;i<NUM_CLASSES; i++){
+    for (let i = 0; i < NUM_CLASSES; i++) {
       const div = document.createElement('div');
       document.body.appendChild(div);
       div.style.marginBottom = '10px';
@@ -83,22 +98,22 @@ class Main {
 
 
     // Setup webcam
-    navigator.mediaDevices.getUserMedia({video: true, audio: false})
-    .then((stream) => {
-      this.video.srcObject = stream;
-      this.video.width = IMAGE_SIZE;
-      this.video.height = IMAGE_SIZE;
+    navigator.mediaDevices.getUserMedia({ video: true, audio: false })
+      .then((stream) => {
+        this.video.srcObject = stream;
+        this.video.width = IMAGE_SIZE;
+        this.video.height = IMAGE_SIZE;
 
-      this.video.addEventListener('playing', ()=> this.videoPlaying = true);
-      this.video.addEventListener('paused', ()=> this.videoPlaying = false);
-    })
+        this.video.addEventListener('playing', () => this.videoPlaying = true);
+        this.video.addEventListener('paused', () => this.videoPlaying = false);
+      })
 
     // Load knn model
     this.knn.load()
-    .then(() => this.start());
+      .then(() => this.start());
   }
 
-  start(){
+  start() {
     if (this.timer) {
       this.stop();
     }
@@ -106,51 +121,51 @@ class Main {
     this.timer = requestAnimationFrame(this.animate.bind(this));
   }
 
-  stop(){
+  stop() {
     this.video.pause();
     cancelAnimationFrame(this.timer);
   }
 
-  animate(){
-    if(this.videoPlaying){
+  animate() {
+    if (this.videoPlaying) {
       // Get image data from video element
       const image = dl.fromPixels(this.video);
 
       // Train class if one of the buttons is held down
-      if(this.training != -1){
+      if (this.training != -1) {
         // Add current image to classifier
         this.knn.addImage(image, this.training)
       }
 
       // If any examples have been added, run predict
       const exampleCount = this.knn.getClassExampleCount();
-      if(Math.max(...exampleCount) > 0){
+      if (Math.max(...exampleCount) > 0) {
         this.knn.predictClass(image)
-        .then((res)=>{
-          // console.log(res);
-          for(let i=0;i<NUM_CLASSES; i++){
-            // Make the predicted class bold
-            if(res.classIndex == i){
-              this.infoTexts[i].style.fontWeight = 'bold';
-            } else {
-              this.infoTexts[i].style.fontWeight = 'normal';
-            }
+          .then((res) => {
+            // console.log(res);
+            for (let i = 0; i < NUM_CLASSES; i++) {
+              // Make the predicted class bold
+              if (res.classIndex == i) {
+                this.infoTexts[i].style.fontWeight = 'bold';
+              } else {
+                this.infoTexts[i].style.fontWeight = 'normal';
+              }
 
-            // Update info text
-            if(exampleCount[i] > 0){
-              // console.log('burada', res.classIndex);
-              if (res.confidences[i]*100 > 75 && res.classIndex !== selected) {
-                selected = res.classIndex
-                console.log(selected);
-                if (selected !== 3) {
+              // Update info text
+              if (exampleCount[i] > 0) {
+                // console.log('burada', res.classIndex);
+                if (res.confidences[i] * 100 > 75 && res.classIndex !== selected) {
+                  selected = res.classIndex
+                  console.log(selected);
+                  if (selected !== 3) {
 
-                  result = {
-                    1: 0,
-                    5: 0,
-                    10: 0
-                  }
+                    result = {
+                      1: 0,
+                      5: 0,
+                      10: 0
+                    }
 
-                  let input;
+                    let input;
 
                     switch (res.classIndex) {
                       case 0:
@@ -167,7 +182,7 @@ class Main {
                     let index = ENUM.findIndex(i => i === ENUM.filter(coin => input > coin)[0])
                     const vending = (input, index) => {
                       if (index < ENUM.length) {
-                        if (index === ENUM.length-1) {
+                        if (index === ENUM.length - 1) {
                           result[ENUM[index]] = 5
                         } else {
                           input = input - ENUM[index]
@@ -181,25 +196,25 @@ class Main {
                     vending(input, index)
                     console.log(`${result[1]} adet 1 ₺, ${result[5]} adet 5 ₺, ${result[10]} adet 10 ₺.`)
                     document.getElementById("1").innerText = result[1] + ' adet';
-                    document.getElementById("5").innerText = result[5]  + ' adet';
+                    document.getElementById("5").innerText = result[5] + ' adet';
                     document.getElementById("10").innerText = result[10] + ' adet';
-                } else {
-                  result = {
-                    1: 0,
-                    5: 0,
-                    10: 0
+                  } else {
+                    result = {
+                      1: 0,
+                      5: 0,
+                      10: 0
+                    }
+                    document.getElementById("1").innerText = result[1] + ' adet';
+                    document.getElementById("5").innerText = result[5] + ' adet';
+                    document.getElementById("10").innerText = result[10] + ' adet';
                   }
-                  document.getElementById("1").innerText = result[1] + ' adet';
-                  document.getElementById("5").innerText = result[5]  + ' adet';
-                  document.getElementById("10").innerText = result[10] + ' adet';
                 }
+                this.infoTexts[i].innerText = ` ${exampleCount[i]} örnek üzerinden - ${res.confidences[i] * 100}%`
               }
-              this.infoTexts[i].innerText = ` ${exampleCount[i]} örnek üzerinden - ${res.confidences[i]*100}%`
             }
-          }
-        })
-        // Dispose image when done
-        .then(()=> image.dispose())
+          })
+          // Dispose image when done
+          .then(() => image.dispose())
       } else {
         image.dispose()
       }
