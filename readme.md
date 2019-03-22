@@ -15,4 +15,6 @@ npm start
 http://localhost:9966
 
 
+Paralarin once kameradan tanitilmasi gerekmektedir.
+
 [Demo](./vending.MP4)
