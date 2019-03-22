@@ -28,6 +28,7 @@ var selected = 0;
 var ENUM = [20, 10, 5, 1];
 
 var coin = [10, 10, 10, 10];
+
 var result = {
   1: 0,
   5: 0,
@@ -38,7 +39,20 @@ window.coin = coin;
 
 var change = function change(id) {
   console.log(ENUM[id]);
-  coin[id] = parseInt(document.getElementById(ENUM[id] + '-input').value);
+
+  var val = parseInt(document.getElementById(ENUM[id] + '-input').value);
+
+  if (isNaN(val)) {
+    val = 0;
+  }
+
+  if (val < 0) {
+    val = 0;
+  }
+
+  coin[id] = val;
+
+  document.getElementById('bank-' + ENUM[id] + '-total').innerHTML = ENUM[id] * coin[id];
 };
 
 window.change = change;
